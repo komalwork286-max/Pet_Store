@@ -1,14 +1,11 @@
 /* =========================================================
    PawNest Pet Store – Demo Website by MiPetzy
+   Marketing website only: no ordering, enquiry or sign-up.
    ---------------------------------------------------------
    STORE SETTINGS: change these for each client.
-   Leave whatsapp / phone empty ('') to keep "demo mode":
-   buttons then show a message instead of calling anyone.
    ========================================================= */
 const STORE = {
   name: 'PawNest Pet Store',
-  whatsapp: '',               // e.g. '919876543210' (country code + number, no + or spaces)
-  phone: '',                  // e.g. '+919876543210'
   mapsQuery: 'Pune, Maharashtra',
   // Opening hours: 0 = Sunday ... 6 = Saturday. Use null for a closed day.
   hours: {
@@ -22,60 +19,33 @@ const STORE = {
   },
 };
 
+// Product showcase. For a real client, replace emoji with a real photo:
+// add  photo: 'assets/products/royal-canin.jpg'  to a product.
 const PRODUCTS = [
-  { name: 'Royal Canin Maxi Adult 4kg', cat: 'dog', label: 'Dog Food', price: 3450, old: 3900, emoji: '🦴', bg: '#FFE3DA', tag: 'Bestseller', rating: 4.9, reviews: 128 },
-  { name: 'Drools Puppy Starter 3kg', cat: 'dog', label: 'Dog Food', price: 1120, old: 1290, emoji: '🐶', bg: '#FFF1C9', tag: '-13%', tagClass: 'sale', rating: 4.8, reviews: 86 },
-  { name: 'Whiskas Ocean Fish 1.2kg', cat: 'cat', label: 'Cat Food', price: 465, emoji: '🐟', bg: '#E1F1FF', tag: 'New', tagClass: 'new', rating: 4.7, reviews: 64 },
-  { name: 'Me-O Creamy Kitten Treats', cat: 'cat', label: 'Cat Treats', price: 240, old: 280, emoji: '🐱', bg: '#ECE6FF', rating: 4.8, reviews: 52 },
-  { name: 'Squeaky Rope Chew Toy', cat: 'toys', label: 'Toys', price: 299, emoji: '🧸', bg: '#DDF6EF', tag: 'Popular', rating: 4.6, reviews: 97 },
-  { name: 'Tennis Ball Fetch Set (3 pcs)', cat: 'toys', label: 'Toys', price: 199, emoji: '🎾', bg: '#FFE3DA', rating: 4.5, reviews: 41 },
-  { name: 'Himalaya Erina-EP Shampoo', cat: 'health', label: 'Grooming', price: 310, emoji: '🧴', bg: '#E1F1FF', rating: 4.8, reviews: 73 },
-  { name: 'Tick & Flea Spot-On (3 pack)', cat: 'health', label: 'Healthcare', price: 650, old: 720, emoji: '💊', bg: '#FFF1C9', tag: '-10%', tagClass: 'sale', rating: 4.7, reviews: 58 },
+  { name: 'Royal Canin Maxi Adult', cat: 'dog', label: 'Dog Food', emoji: '🦴', bg: '#ECE9FF', tag: 'Bestseller' },
+  { name: 'Drools Puppy Starter', cat: 'dog', label: 'Dog Food', emoji: '🐶', bg: '#FFF3DC', tag: 'Popular' },
+  { name: 'Whiskas Ocean Fish', cat: 'cat', label: 'Cat Food', emoji: '🐟', bg: '#E1F1FF', tag: 'New', tagClass: 'new' },
+  { name: 'Me-O Creamy Kitten Treats', cat: 'cat', label: 'Cat Treats', emoji: '🐱', bg: '#FFE0E8' },
+  { name: 'Squeaky Rope Chew Toy', cat: 'toys', label: 'Toys', emoji: '🧸', bg: '#DDF6EF', tag: 'Popular' },
+  { name: 'Tennis Ball Fetch Set', cat: 'toys', label: 'Toys', emoji: '🎾', bg: '#ECE9FF' },
+  { name: 'Himalaya Erina-EP Shampoo', cat: 'health', label: 'Grooming', emoji: '🧴', bg: '#E1F1FF' },
+  { name: 'Tick & Flea Spot-On', cat: 'health', label: 'Healthcare', emoji: '💊', bg: '#FFF3DC' },
 ];
 
 const $ = (s, c = document) => c.querySelector(s);
 const $$ = (s, c = document) => [...c.querySelectorAll(s)];
-const inr = n => '₹' + n.toLocaleString('en-IN');
 
 /* ---------- Loader ---------- */
 window.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => $('#loader').classList.add('hide'), 700);
 });
 
-/* ---------- Toast ---------- */
-const toastEl = $('#toast');
-let toastTimer;
-function toast(msg) {
-  toastEl.textContent = msg;
-  toastEl.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 3200);
-}
-
-/* ---------- Contact actions (WhatsApp / Call / Directions) ---------- */
-function openWhatsApp(text) {
-  if (!STORE.whatsapp) {
-    toast(`💬 Demo: this opens the store's WhatsApp chat${text ? ' with the product already typed in' : ''}.`);
-    return;
-  }
-  const msg = text || `Hi ${STORE.name}! I have a query.`;
-  window.open(`https://wa.me/${STORE.whatsapp}?text=${encodeURIComponent(msg)}`, '_blank', 'noopener');
-}
-function callStore() {
-  if (!STORE.phone) { toast('📞 Demo: this calls the store directly in one tap.'); return; }
-  location.href = `tel:${STORE.phone}`;
-}
-function openDirections() {
-  window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(STORE.mapsQuery)}`, '_blank', 'noopener');
-}
+/* ---------- Directions ---------- */
 document.addEventListener('click', e => {
-  const el = e.target.closest('[data-action]');
+  const el = e.target.closest('[data-action="directions"]');
   if (!el) return;
   e.preventDefault();
-  const action = el.dataset.action;
-  if (action === 'whatsapp') openWhatsApp(el.dataset.msg);
-  else if (action === 'call') callStore();
-  else if (action === 'directions') openDirections();
+  window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(STORE.mapsQuery)}`, '_blank', 'noopener');
 });
 
 /* ---------- Demo bar ---------- */
@@ -95,7 +65,6 @@ function onScroll() {
   const max = document.documentElement.scrollHeight - innerHeight;
   progress.style.width = (max > 0 ? (y / max) * 100 : 0) + '%';
 
-  // Highlight current section in the menu
   let current = 'home';
   $$('section[id]').forEach(sec => { if (y >= sec.offsetTop - 140) current = sec.id; });
   $$('.nav-links a').forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current));
@@ -160,7 +129,7 @@ if ('IntersectionObserver' in window) {
   $$('[data-count]').forEach(animateCount);
 }
 
-/* ---------- Products + filters ---------- */
+/* ---------- Product showcase + filters ---------- */
 const grid = $('#productGrid');
 function renderProducts(filter = 'all') {
   const list = filter === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.cat === filter);
@@ -168,58 +137,20 @@ function renderProducts(filter = 'all') {
     <article class="product-card" style="animation-delay:${i * 0.07}s">
       <div class="product-img" style="--pbg:${p.bg}">
         ${p.tag ? `<span class="tag ${p.tagClass || ''}">${p.tag}</span>` : ''}
-        <button class="wish" aria-label="Add to wishlist">🤍</button>
-        <span class="emoji">${p.emoji}</span>
+        ${p.photo ? `<img src="${p.photo}" alt="${p.name}" loading="lazy">` : `<span class="emoji">${p.emoji}</span>`}
       </div>
       <div class="product-body">
         <small>${p.label}</small>
         <h4>${p.name}</h4>
-        <div class="rating">★★★★★ <span>${p.rating} (${p.reviews})</span></div>
-        <div class="price-row">
-          <div class="price">${inr(p.price)}${p.old ? `<del>${inr(p.old)}</del>` : ''}</div>
-          <button class="enquire" data-action="whatsapp" data-msg="Hi! Is ${p.name} available? (${inr(p.price)})">💬 Enquire</button>
-        </div>
+        <span class="in-store">✔ Available in store</span>
       </div>
     </article>`).join('');
 }
-function setFilter(f) {
-  $$('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === f));
-  renderProducts(f);
-}
-$$('.filter-btn').forEach(b => b.addEventListener('click', () => setFilter(b.dataset.filter)));
-$$('.cat-card[data-filter]').forEach(c => c.addEventListener('click', () => {
-  setFilter(c.dataset.filter);
-  $('#shop').scrollIntoView({ behavior: 'smooth' });
+$$('.filter-btn').forEach(b => b.addEventListener('click', () => {
+  $$('.filter-btn').forEach(x => x.classList.toggle('active', x === b));
+  renderProducts(b.dataset.filter);
 }));
-grid.addEventListener('click', e => {
-  const btn = e.target.closest('.wish');
-  if (!btn) return;
-  const liked = btn.classList.toggle('liked');
-  btn.textContent = liked ? '❤️' : '🤍';
-  toast(liked ? '❤️ Added to your wishlist' : 'Removed from wishlist');
-});
 renderProducts();
-
-/* ---------- Offer countdown (ends every Sunday night) ---------- */
-function nextSundayEnd() {
-  const d = new Date();
-  d.setDate(d.getDate() + ((7 - d.getDay()) % 7));
-  d.setHours(23, 59, 59, 0);
-  if (d <= new Date()) d.setDate(d.getDate() + 7);
-  return d;
-}
-let offerEnd = nextSundayEnd();
-function updateCountdown() {
-  let diff = offerEnd - new Date();
-  if (diff <= 0) { offerEnd = nextSundayEnd(); diff = offerEnd - new Date(); }
-  const pad = n => String(n).padStart(2, '0');
-  $('#cdD').textContent = pad(Math.floor(diff / 864e5));
-  $('#cdH').textContent = pad(Math.floor(diff / 36e5) % 24);
-  $('#cdM').textContent = pad(Math.floor(diff / 6e4) % 60);
-  $('#cdS').textContent = pad(Math.floor(diff / 1e3) % 60);
-}
-updateCountdown();
-setInterval(updateCountdown, 1000);
 
 /* ---------- Reviews slider ---------- */
 const track = $('#reviewTrack');
@@ -257,22 +188,6 @@ track.parentElement.addEventListener('mouseenter', () => clearInterval(autoTimer
 track.parentElement.addEventListener('mouseleave', restartAuto);
 goTo(0);
 restartAuto();
-
-/* ---------- FAQ accordion ---------- */
-$$('.faq-item').forEach(item => {
-  $('.faq-q', item).addEventListener('click', () => {
-    const isOpen = item.classList.contains('open');
-    $$('.faq-item').forEach(other => {
-      other.classList.remove('open');
-      $('.faq-a', other).style.maxHeight = null;
-    });
-    if (!isOpen) {
-      item.classList.add('open');
-      const answer = $('.faq-a', item);
-      answer.style.maxHeight = answer.scrollHeight + 'px';
-    }
-  });
-});
 
 /* ---------- Opening hours + live open/closed status ---------- */
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -320,20 +235,6 @@ function updateStatus() {
 renderHours();
 updateStatus();
 setInterval(updateStatus, 60000);
-
-/* ---------- MiPetzy "Notify me" form (demo only, nothing is saved) ---------- */
-$('#notifyForm').addEventListener('submit', e => {
-  e.preventDefault();
-  const input = $('#notifyPhone');
-  const digits = input.value.replace(/\D/g, '');
-  if (digits.length < 10) {
-    toast('📱 Please enter a valid 10-digit mobile number');
-    input.focus();
-    return;
-  }
-  input.value = '';
-  toast(`🎉 Thanks! You'll be notified when ${STORE.name} goes live on MiPetzy.`);
-});
 
 /* ---------- Footer year ---------- */
 $('#year').textContent = new Date().getFullYear();

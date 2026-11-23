@@ -9,7 +9,7 @@ A one-page demo website for a pet store, built with plain HTML, CSS and JavaScri
 pawnest-demo-website/
 ├── index.html      → page content
 ├── css/style.css   → colours, layout, animations
-├── js/main.js      → interactions + STORE settings (top of file)
+├── js/main.js      → animations, product list + STORE settings (top of file)
 ├── assets/         → MiPetzy app screenshots
 └── README.md
 ```
@@ -21,8 +21,7 @@ pawnest-demo-website/
 
 ## Customise for a real client
 
-1. Open `js/main.js` and edit the `STORE` block at the top: name, WhatsApp number, phone, map location, opening hours.
-   While `whatsapp` and `phone` are empty, the buttons stay in demo mode and show a message instead.
+1. Open `js/main.js` and edit the `STORE` block (name, map location, opening hours) and the `PRODUCTS` list (add `photo` paths for real product photos).
 2. In `index.html`, replace "PawNest", the address, products, reviews and gallery with the client's real details.
 3. Remove the "Demo website" bar at the top of `index.html` (the `demo-bar` div).
 
